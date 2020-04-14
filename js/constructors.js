@@ -1,43 +1,63 @@
-// AN EXTREMELY ROUGH DRAFT OF WHAT IT MAYBE WILLL LOOK LIKE. KEEP THAT IN MIND AS YOUR EYES BLEED READING IT
-function Subject()
-{
-    this.schedule = daily; //[monday, tuesday, wednesday, thursday, friday]
-    //daily, weekdays, weekends, alternating weedaays, alternating, custom
+/*
+ideas: Subjects and TaskContainers need an algorithm to unpack them and sort values into its proper inline-blocks that are appended to a parent element
+They should then be attached as a propery of the HTMLElement representing them, so they become referable when processing user input
+*/
 
-    this.tasks = {
-        attendence = new Attendence(this.schedule), //make this occur everyday the user has this subject (schedule)
-        homeworks = new Homeworks(null, "4/20");
-        classworks = new Classworks(this.schedule, "4/20");
-        projects = new Projects(null, "4/20");
-        test(s) = new Tests("4/20");
-    };
+
+
+/*
+properties: custom notes, attendance link+time, color coding, meeting site+time, homeworks, classwork, projects, test
+methods: 
+*/
+function Subject(name) { 
+    this.name = name;
+
+    this.notes = ""; //custom notes.  obtain from a text box on the interface
+
+    this.attendance = new Task(); //deadline is when teacher wants attendance.  leave undefined if no deadline.  notes is the link to the attendance form.  obtain from a text box on the interface
+    this.meeting = new Task(); //deadline is when a meeting is.  notes is location of meeting.  obtain from a text box on the interface
+
+    this.homework = new TaskContainer(); //written to by TaskContainer methods
+    this.classwork = new TaskContainer();
+    this.project = new TaskContainer();
+    this.test = new TaskContainer();
+
+    this.color = "white"; //create a settings section for each subject's front end representation that allows writing to this property to change the subject's color
 }
 
-function Attendence(schedule, due)
-{
-    this.schedule = schedule; //this appears every time the schedule occurs
-    this.due = due; //some teachers require attendence to be filled by a certain time
+
+
+/*
+properties: Like an array, but to contain Tasks
+methods: sort by due date, add new task
+*/
+function TaskContainer() {}
+TaskContainer.prototype = Array.prototype;
+
+TaskContainer.prototype.sortTasks = function() { //button onclick
+    
 }
-function Homeworks(schedule, due) //input null for schedule to skip to 'due'
-{
-    this.schedule = schedule;//schedule -> for homeworks that are due daily, semi-daily, or on a regular basis
-    this.due = due;
+TaskContainer.prototype.addTask = function(name, deadline, time) { //button onclick
+    var t = new Task(name, deadline, time);
+    this.push(t); 
+    return t;
 }
-function Classworks(schedule, due)
-{
-    this.schedule = schedule;
-    this.due = due;
+
+
+
+/*
+properties: due date, custom notes, color coding, completion status (cross off when done)
+methods: set reminder for due dates, mark as done
+*/
+function Task(name, deadline, time) { 
+    this.name = name;
+    this.deadline = deadline;
+    this.time = time;
+    this.completed = false;
 }
-function Projects(schedule, due)
-{
-    this.schedule = schedule;
-    this.due = due;
-    this.tasks = {
-        //custom user inputs for mini-tasks or to-dos -> is in an object cos we want it like a checkbox - user should be able to see which they've completed and which they haven't or smthn
-    };
+Task.prototype.remind = function(time) { //time comes from a text box on interface
+    
 }
-function Tests(due)
-{
-    this.notes = [custom note1, custom note2];
-    this.due = due;
+Task.prototype.markAsDone = function() { //on check of a checkbox
+    this.completed = true;
 }

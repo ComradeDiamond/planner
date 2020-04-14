@@ -1,0 +1,13 @@
+
+Calendar
+
+General
+    Cards (Each representative of a subject)
+        Teacher
+        Notes
+        Works due, and when + name
+        Projects due, and when + name
+        Tests and when + topic
+            Notes
+        Quizzes and when + topic
+            Notes
