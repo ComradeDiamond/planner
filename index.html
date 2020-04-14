@@ -21,6 +21,7 @@
 
       .teacher {
         font-size: 25pt;
+        color: inherit;
       }
 
       .assignment {
@@ -123,6 +124,13 @@
         tempB.className = 'deleteButton'
         tempB.innerText = 'X'
 
+        let colorChange = document.createElement("input")
+        colorChange.type = "color";
+        colorChange.addEventListener("change", function() {
+          tempS.style.backgroundColor = this.value;
+          tempS.style.color = invertColor(this.value);
+        })
+
         let tempT = document.createElement('h1')
         tempT.className = 'teacher'
         tempT.innerText = t
@@ -164,6 +172,7 @@
 
 
         tempS.appendChild(tempB)
+        tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
         tempS.appendChild(tempA)
        
