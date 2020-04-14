@@ -40,18 +40,18 @@
       }
       .description {
       	font-family: comic sans ms;
-      	color: black; /*This could be changed */
+      	color: inherit; /*This could be changed */
       }
       h1 {
       	font-family: comic sans ms;
-      	color: gold;
+      	color: inherit;
       }
       .dateCSS {
-      	color: cornflowerblue;
+      	color: inherit;
       	text-decoration: underline;
       }
       .weekdateCSS {
-      	color: green;
+      	color: inherit;
       }
     </style>
 
@@ -280,8 +280,8 @@ function padZero(str, len) {
     <meta charset="utf-8">
     <title>Card demo</title>
   </head>
-  <body onload="initi();">
-
+  <body onload="init();">
+    <input type="color" onchange="document.body.style.backgroundColor = this.value; document.body.style.color = invertColor(this.value);"></input>
     <!-- <section class='card'>
       <button id='delete' class='deleteButton'>X</button>
       <h1 class='teacher'>Class</h1>
