@@ -67,13 +67,6 @@
         tempT.className = 'teacher'
         tempT.innerText = t
 
-        let showCompleted = document.createElement('button');
-        button.innerHTML = "Show Completed Work";
-        showCompleted.addEventListener("click", function(){
-          displayDone = false;
-
-        });
-
         let cw = document.createElement('span') 
         cw.className= 'assignment'
         cw.assignemnts = tempS.subject.classwork;
@@ -128,6 +121,7 @@
           tempTask.innerHTML = "<br /> (" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
 
           tempTask.task = ntask;
+
           let markdone = document.createElement("button"); //mark as done
           markdone.innerHTML = "Mark as done";
           markdone.correspondingTaskEl = tempTask;
@@ -136,6 +130,15 @@
             this.correspondingTaskEl.style.textDecoration = "line-through";
           })
           tempTask.appendChild(markdone);
+          let hidecompleted = document.createElement("button");
+          hidecompleted.innerHTML = "Hide";
+          hidecompleted.correspondingTaskEl = tempTask;
+          hidecompleted.addEventListener("click", function() {
+            if(ntask.completed)
+              this.correspondingTaskEl.style.display = "none";
+          })
+          tempTask.appendChild(hidecompleted);
+
           switch (selection.value) {
             case("homework"):
               var el = hw;
