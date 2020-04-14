@@ -135,9 +135,39 @@
         tempT.className = 'teacher'
         tempT.innerText = t
 
-        let tempA = document.createElement('span') //span for classworks
-        tempA.className= 'assignment'
-        tempA.assignemnts = tempS.subject.classwork;
+        let cw = document.createElement('span') 
+        cw.className= 'assignment'
+        cw.assignemnts = tempS.subject.classwork;
+        let hw = document.createElement('span') 
+        hw.className= 'assignment'
+        hw.assignemnts = tempS.subject.homework;
+        let project = document.createElement('span') 
+        project.className= 'assignment'
+        project.assignemnts = tempS.subject.project;
+        let test = document.createElement('span') 
+        test.className= 'assignment'
+        test.assignemnts = tempS.subject.test;
+
+        let selection = document.createElement("select");
+        let v1 = document.createElement("option");
+        v1.value = "classwork";
+        v1.innerHTML = "classwork";
+        selection.options.add(v1);
+
+        let v2 = document.createElement("option");
+        v2.value = "homework";
+        v2.innerHTML = "homework";
+        selection.options.add(v2);
+
+        let v3 = document.createElement("option");
+        v3.value = "project";
+        v3.innerHTML = "project";
+        selection.options.add(v3);
+
+        let v4 = document.createElement("option");
+        v4.value = "test";
+        v4.innerHTML = "test";
+        selection.options.add(v4);
 
         let nameIn = document.createElement("input"); //input fields for adding new tasks
         nameIn.placeholder = "Assignment name";
@@ -154,9 +184,9 @@
 
         tempBtn.innerHTML = "Add assignment"
         tempBtn.addEventListener("click", function(){
-          var ntask = tempS.subject.classwork.addTask(nameIn.value, dateIn.value, timeIn.value); 
+          var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value); 
           let tempTask = document.createElement("span");
-          tempTask.innerHTML = "<br />" + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
+          tempTask.innerHTML = "<br />" + nameIn.value + " " + dateIn.value + " " + timeIn.value + "(" + selection.value + ")"; //append new task
 
           tempTask.task = ntask;
           let markdone = document.createElement("button"); //mark as done
@@ -167,19 +197,39 @@
             this.correspondingTaskEl.style.textDecoration = "line-through";
           })
           tempTask.appendChild(markdone);
-          tempA.appendChild(tempTask);
+          switch (selection.value) {
+            case("homework"):
+              var el = hw;
+              break;
+            case("classwork"):
+              var el = cw;
+              break;
+            case("test"):
+              var el = test;
+              break;
+            case("project"):
+              var el = project;
+              break;
+              
+          }
+          el.appendChild(tempTask);
         });
 
 
         tempS.appendChild(tempB)
         tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
-        tempS.appendChild(tempA)
        
-        tempA.appendChild(nameIn);
-        tempA.appendChild(dateIn);
-        tempA.appendChild(timeIn);
-        tempA.appendChild(tempBtn);
+        tempS.appendChild(nameIn);
+        tempS.appendChild(dateIn);
+        tempS.appendChild(timeIn);
+        tempS.appendChild(selection);
+        tempS.appendChild(tempBtn);
+
+        tempS.appendChild(cw)
+        tempS.appendChild(hw)
+        tempS.appendChild(project)
+        tempS.appendChild(test)
 
 
         return tempS
