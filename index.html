@@ -1,13 +1,305 @@
-<!doctype html>
-<html>
-    <head>
-        <title>Planner</title>
-        <link rel="stylesheet" href="css/style.css" />
-        <script src="js/constructors.js"></script>
-        <script src="js/settings.js"></script>
-        <script src="js/script.js"></script>
-    </head>
-    <body>
-        
-    </body>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <style>
+
+
+      @font-face {
+        src:url('http://adoof.us/SFBold.ttf');
+        font-family: SFBold;
+      }
+
+      .card {
+        font-family: SFBold;
+        background-color: green;
+        display: inline-block;
+        min-width: 30%;
+        border-radius: 10px;
+        padding: 5px;
+        margin: 5px;
+      }
+
+      .teacher {
+        font-size: 25pt;
+        color: inherit;
+      }
+
+      .assignment {
+        font-size: 17pt;
+      }
+
+      .due-date {
+        font-size: 13pt;
+      }
+
+      .deleteButton {
+        position: relative;
+        top: 0;
+        right: 0;
+        margin: 0 auto;
+      }
+      .description {
+      	font-family: comic sans ms;
+      	color: inherit; /*This could be changed */
+      }
+      h1 {
+      	font-family: comic sans ms;
+      	color: inherit;
+      }
+      .dateCSS {
+      	color: inherit;
+      	text-decoration: underline;
+      }
+      .weekdateCSS {
+      	color: inherit;
+      }
+    </style>
+
+    <script>
+      function Subject(name) { 
+          this.name = name; 
+
+          this.homework = new TaskContainer(); 
+          this.classwork = new TaskContainer();
+          this.project = new TaskContainer();
+          this.test = new TaskContainer();
+      }
+
+      function TaskContainer() {}
+      TaskContainer.prototype = Array.prototype;
+      TaskContainer.prototype.sortTasks = function() { 
+          
+      }
+      TaskContainer.prototype.addTask = function(name, deadline, time) { 
+          var t = new Task(name, deadline, time);
+          this.push(t); 
+          return t;
+      }
+
+      function Task(name, deadline, time) { 
+          this.name = name;
+          this.deadline = deadline;
+          this.time = time;
+          this.completed = false;
+      }
+      Task.prototype.remind = function(time) { //time comes from a text box on interface
+          
+      }
+      Task.prototype.markAsDone = function() { //on check of a checkbox
+          this.completed = true;
+      }
+
+      function init () {        
+        teacherInput = document.getElementById('teacherInput')
+        assignmentInput = document.getElementById('assignmentInput')
+        dueDateInput = document.getElementById('dueDateInput')
+        submitButton = document.getElementById('submitButton')
+        colorInput = document.getElementById('colorInput')
+        submitButton.addEventListener("click",generateCardFromClick)
+        dateHTML = document.getElementById("date");
+        weekdayHTML = document.getElementById("weekday");
+        displayDate();
+      }
+
+      document.addEventListener("DOMContentLoaded", init)
+      
+      function displayDate() { //Displays the date in the frontal frontend and the weekday it is
+      	dateBackend = new Date();
+      	dateHTML.innerHTML = dateBackend.getMonth() + '/' + dateBackend.getDate();
+      	let daynum = dateBackend.getDay();
+      	let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      	weekdayHTML.innerHTML = days[daynum];
+      }
+      function createCard (t,c) {
+        let tempS = document.createElement('section')
+        tempS.className = 'card'
+        tempS.subject = new Subject(t)
+        tempS.style.backgroundColor = c
+        tempS.style.color = invertColor(c)
+
+        let tempB = document.createElement('button')
+        tempB.addEventListener("click", function(){
+          document.body.removeChild(tempS)
+        })
+        tempB.className = 'deleteButton'
+        tempB.innerText = 'X'
+
+        let colorChange = document.createElement("input")
+        colorChange.type = "color";
+        colorChange.addEventListener("change", function() {
+          tempS.style.backgroundColor = this.value;
+          tempS.style.color = invertColor(this.value);
+        })
+
+        let tempT = document.createElement('h1')
+        tempT.className = 'teacher'
+        tempT.innerText = t
+
+        let cw = document.createElement('span') 
+        cw.className= 'assignment'
+        cw.assignemnts = tempS.subject.classwork;
+        let hw = document.createElement('span') 
+        hw.className= 'assignment'
+        hw.assignemnts = tempS.subject.homework;
+        let project = document.createElement('span') 
+        project.className= 'assignment'
+        project.assignemnts = tempS.subject.project;
+        let test = document.createElement('span') 
+        test.className= 'assignment'
+        test.assignemnts = tempS.subject.test;
+
+        let selection = document.createElement("select");
+        let v1 = document.createElement("option");
+        v1.value = "classwork";
+        v1.innerHTML = "classwork";
+        selection.options.add(v1);
+
+        let v2 = document.createElement("option");
+        v2.value = "homework";
+        v2.innerHTML = "homework";
+        selection.options.add(v2);
+
+        let v3 = document.createElement("option");
+        v3.value = "project";
+        v3.innerHTML = "project";
+        selection.options.add(v3);
+
+        let v4 = document.createElement("option");
+        v4.value = "test";
+        v4.innerHTML = "test";
+        selection.options.add(v4);
+
+        let nameIn = document.createElement("input"); //input fields for adding new tasks
+        nameIn.placeholder = "Assignment name";
+        nameIn.id = "assignmentInput";
+        let dateIn = document.createElement("input");
+        dateIn.type = "date";
+        dateIn.placeholder = "Due date";
+        dateIn.id = "dueDateInput";
+        let timeIn = document.createElement("input");
+        timeIn.type = "time";
+        timeIn.placeholder = "Due time";
+        timeIn.id = "dueTimeInput";
+        let tempBtn = document.createElement("button");
+
+        tempBtn.innerHTML = "Add assignment"
+        tempBtn.addEventListener("click", function(){
+          var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value); 
+          let tempTask = document.createElement("span");
+          tempTask.innerHTML = "<br />" + nameIn.value + " " + dateIn.value + " " + timeIn.value + "(" + selection.value + ")"; //append new task
+
+          tempTask.task = ntask;
+          let markdone = document.createElement("button"); //mark as done
+          markdone.innerHTML = "Mark as done";
+          markdone.correspondingTaskEl = tempTask;
+          markdone.addEventListener("click", function() {
+            ntask.markAsDone();
+            this.correspondingTaskEl.style.textDecoration = "line-through";
+          })
+          tempTask.appendChild(markdone);
+          switch (selection.value) {
+            case("homework"):
+              var el = hw;
+              break;
+            case("classwork"):
+              var el = cw;
+              break;
+            case("test"):
+              var el = test;
+              break;
+            case("project"):
+              var el = project;
+              break;
+              
+          }
+          el.appendChild(tempTask);
+        });
+
+
+        tempS.appendChild(tempB)
+        tempS.appendChild(colorChange)
+        tempS.appendChild(tempT)
+       
+        tempS.appendChild(nameIn);
+        tempS.appendChild(dateIn);
+        tempS.appendChild(timeIn);
+        tempS.appendChild(selection);
+        tempS.appendChild(tempBtn);
+
+        tempS.appendChild(cw)
+        tempS.appendChild(hw)
+        tempS.appendChild(project)
+        tempS.appendChild(test)
+
+
+        return tempS
+      }
+
+      function generateCardFromClick() {
+        teacherInput = document.getElementById('teacherInput')
+
+        displayCard(createCard(teacherInput.value,colorInput.value))
+      }
+
+
+      function displayCard (c) {
+        document.body.appendChild(c)
+      }
+
+
+
+//I didnt write this code lmao, its for inverting hex colors and its from stack overflow
+
+      function invertColor(hex) {
+    if (hex.indexOf('#') === 0) {
+        hex = hex.slice(1);
+    }
+    // convert 3-digit hex to 6-digits.
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    if (hex.length !== 6) {
+        throw new Error('Invalid HEX color.');
+    }
+    // invert color components
+    var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
+        g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
+        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+    // pad each with zeros and return
+    return '#' + padZero(r) + padZero(g) + padZero(b);
+}
+
+function padZero(str, len) {
+    len = len || 2;
+    var zeros = new Array(len).join('0');
+    return (zeros + str).slice(-len);
+}
+
+
+    </script>
+    <meta charset="utf-8">
+    <title>Card demo</title>
+  </head>
+  <body onload="init();">
+    <input type="color" onchange="document.body.style.backgroundColor = this.value; document.body.style.color = invertColor(this.value);"></input>
+    <!-- <section class='card'>
+      <button id='delete' class='deleteButton'>X</button>
+      <h1 class='teacher'>Class</h1>
+      <h2 class='assignment'>Assignment Name</h2>
+      <h3 class='due-date'>Due date</h3>
+    </section> -->
+
+    <h1>Assignment Logger</h1>
+    <p class="description">
+    	Use this planner to jot down your current assignments and completion dates <br />
+    	Current date: <span class="dateCSS" id="date"></span>, <span class="weekdateCSS" id="weekday"></span>
+    </p>
+    <section id='createCard' class="createCard">
+      <input placeholder='Class name' id='teacherInput'>
+
+      <input type="color" id='colorInput'>
+      <button id='submitButton'>Add</button>
+    </section>
+
+  </body>
 </html>
