@@ -1,95 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <style>
+    <link rel = "stylesheet" href = "css/main.css"/>
 
+    <style>
 
       @font-face {
         src:url('http://adoof.us/SFBold.ttf');
         font-family: SFBold;
       }
 
-      .card {
-        font-family: SFBold;
-        background-color: green;
-        display: inline-block;
-        min-width: 30%;
-        border-radius: 10px;
-        padding: 5px;
-        margin: 5px;
-      }
-
-      .teacher {
-        font-size: 25pt;
-        color: inherit;
-      }
-
-      .assignment {
-        font-size: 17pt;
-      }
-
-      .due-date {
-        font-size: 13pt;
-      }
-
-      .deleteButton {
-        position: relative;
-        top: 0;
-        right: 0;
-        margin: 0 auto;
-      }
-      .description {
-      	font-family: comic sans ms;
-      	color: inherit; /*This could be changed */
-      }
-      h1 {
-      	font-family: comic sans ms;
-      	color: inherit;
-      }
-      .dateCSS {
-      	color: inherit;
-      	text-decoration: underline;
-      }
-      .weekdateCSS {
-      	color: inherit;
-      }
     </style>
 
+    <script src = "js/constructors.js"></script>
+    <script src = "js/script.js"></script>
+    <script src = "js/settings.js"></script>
+    
     <script>
-      function Subject(name) { 
-          this.name = name; 
 
-          this.homework = new TaskContainer(); 
-          this.classwork = new TaskContainer();
-          this.project = new TaskContainer();
-          this.test = new TaskContainer();
-      }
-
-      function TaskContainer() {}
-      TaskContainer.prototype = Array.prototype;
-      TaskContainer.prototype.sortTasks = function() { 
-          
-      }
-      TaskContainer.prototype.addTask = function(name, deadline, time) { 
-          var t = new Task(name, deadline, time);
-          this.push(t); 
-          return t;
-      }
-
-      function Task(name, deadline, time) { 
-          this.name = name;
-          this.deadline = deadline;
-          this.time = time;
-          this.completed = false;
-      }
-      Task.prototype.remind = function(time) { //time comes from a text box on interface
-          
-      }
-      Task.prototype.markAsDone = function() { //on check of a checkbox
-          this.completed = true;
-      }
-
-      function init () {        
+      function initmain () {        
         teacherInput = document.getElementById('teacherInput')
         assignmentInput = document.getElementById('assignmentInput')
         dueDateInput = document.getElementById('dueDateInput')
@@ -101,7 +30,7 @@
         displayDate();
       }
 
-      document.addEventListener("DOMContentLoaded", init)
+      document.addEventListener("DOMContentLoaded", initmain)
       
       function displayDate() { //Displays the date in the frontal frontend and the weekday it is
       	dateBackend = new Date();
@@ -110,7 +39,10 @@
       	let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       	weekdayHTML.innerHTML = days[daynum];
       }
+
       function createCard (t,c) {
+        let displayDone = true;
+
         let tempS = document.createElement('section')
         tempS.className = 'card'
         tempS.subject = new Subject(t)
@@ -134,6 +66,13 @@
         let tempT = document.createElement('h1')
         tempT.className = 'teacher'
         tempT.innerText = t
+
+        let showCompleted = document.createElement('button');
+        button.innerHTML = "Show Completed Work";
+        showCompleted.addEventListener("click", function(){
+          displayDone = false;
+
+        });
 
         let cw = document.createElement('span') 
         cw.className= 'assignment'
@@ -186,7 +125,7 @@
         tempBtn.addEventListener("click", function(){
           var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value); 
           let tempTask = document.createElement("span");
-          tempTask.innerHTML = "<br />" + nameIn.value + " " + dateIn.value + " " + timeIn.value + "(" + selection.value + ")"; //append new task
+          tempTask.innerHTML = "<br /> (" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
 
           tempTask.task = ntask;
           let markdone = document.createElement("button"); //mark as done
@@ -210,15 +149,14 @@
             case("project"):
               var el = project;
               break;
-              
           }
           el.appendChild(tempTask);
         });
 
-
         tempS.appendChild(tempB)
         tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
+        tempS.appendChild
        
         tempS.appendChild(nameIn);
         tempS.appendChild(dateIn);
@@ -231,7 +169,6 @@
         tempS.appendChild(project)
         tempS.appendChild(test)
 
-
         return tempS
       }
 
@@ -241,46 +178,42 @@
         displayCard(createCard(teacherInput.value,colorInput.value))
       }
 
-
       function displayCard (c) {
         document.body.appendChild(c)
       }
 
-
-
 //I didnt write this code lmao, its for inverting hex colors and its from stack overflow
 
-      function invertColor(hex) {
-    if (hex.indexOf('#') === 0) {
-        hex = hex.slice(1);
+    function invertColor(hex) {
+      if (hex.indexOf('#') === 0) {
+          hex = hex.slice(1);
+      }
+      // convert 3-digit hex to 6-digits.
+      if (hex.length === 3) {
+          hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      }
+      if (hex.length !== 6) {
+          throw new Error('Invalid HEX color.');
+      }
+      // invert color components
+      var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
+          g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
+          b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+      // pad each with zeros and return
+      return '#' + padZero(r) + padZero(g) + padZero(b);
     }
-    // convert 3-digit hex to 6-digits.
-    if (hex.length === 3) {
-        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-    if (hex.length !== 6) {
-        throw new Error('Invalid HEX color.');
-    }
-    // invert color components
-    var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
-        g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
-        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
-    // pad each with zeros and return
-    return '#' + padZero(r) + padZero(g) + padZero(b);
-}
 
-function padZero(str, len) {
-    len = len || 2;
-    var zeros = new Array(len).join('0');
-    return (zeros + str).slice(-len);
-}
-
+    function padZero(str, len) {
+        len = len || 2;
+        var zeros = new Array(len).join('0');
+        return (zeros + str).slice(-len);
+    }
 
     </script>
     <meta charset="utf-8">
     <title>Card demo</title>
   </head>
-  <body onload="init();">
+  <body onload="initmain();">
     <input type="color" onchange="document.body.style.backgroundColor = this.value; document.body.style.color = invertColor(this.value);"></input>
     <!-- <section class='card'>
       <button id='delete' class='deleteButton'>X</button>

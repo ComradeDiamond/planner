@@ -9,7 +9,9 @@ They should then be attached as a propery of the HTMLElement representing them, 
 properties: custom notes, attendance link+time, color coding, meeting site+time, homeworks, classwork, projects, test
 methods: 
 */
-function Subject() { 
+function Subject(name) { 
+    this.name = name;
+
     this.notes = ""; //custom notes.  obtain from a text box on the interface
 
     this.attendance = new Task(); //deadline is when teacher wants attendance.  leave undefined if no deadline.  notes is the link to the attendance form.  obtain from a text box on the interface
@@ -31,12 +33,14 @@ methods: sort by due date, add new task
 */
 function TaskContainer() {}
 TaskContainer.prototype = Array.prototype;
+
 TaskContainer.prototype.sortTasks = function() { //button onclick
     
 }
-TaskContainer.prototype.addTask = function() { //button onclick
-    this.push(new Task()); //obtain deadline and notes from a text box on the interface
-    
+TaskContainer.prototype.addTask = function(name, deadline, time) { //button onclick
+    var t = new Task(name, deadline, time);
+    this.push(t); 
+    return t;
 }
 
 
@@ -45,11 +49,11 @@ TaskContainer.prototype.addTask = function() { //button onclick
 properties: due date, custom notes, color coding, completion status (cross off when done)
 methods: set reminder for due dates, mark as done
 */
-function Task(deadline, notes) { 
+function Task(name, deadline, time) { 
+    this.name = name;
     this.deadline = deadline;
-    this.notes = notes;
+    this.time = time;
     this.completed = false;
-    this.color = "black"; //value to be editable by a settings interface
 }
 Task.prototype.remind = function(time) { //time comes from a text box on interface
     
