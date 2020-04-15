@@ -120,12 +120,12 @@
         toggleBtn.innerHTML = 'Toggle Visibility';
         toggleBtn.addEventListener("click", function(){
         	if (tempS.style.Visibility == "hidden") {
-        		tempS.style.Visibility == "visible";
+        		tempS.style.Visibility = "visible";
         	}
         	else
         	{
-        		tempS.style.Visibility == "hidden";
-        		this.style.Visibility == "visible";
+        		tempS.style.Visibility = "hidden";
+        		this.style.Visibility = "visible";
         	}
         })
         let tempBtn = document.createElement("button");
@@ -175,14 +175,13 @@
         tempS.appendChild(tempB)
         tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
-        tempS.appendChild(div)
-        tempS.appendChild(toggleBtn)
-       
+
         tempS.appendChild(nameIn);
         tempS.appendChild(dateIn);
         tempS.appendChild(timeIn);
         tempS.appendChild(selection);
         tempS.appendChild(tempBtn);
+        tempS.appendChild(toggleBtn);
 
         tempS.appendChild(cw)
         tempS.appendChild(hw)
