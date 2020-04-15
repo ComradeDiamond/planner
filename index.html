@@ -30,10 +30,14 @@
         submitButton.addEventListener("click",generateCardFromClick)
         dateHTML = document.getElementById("date");
         weekdayHTML = document.getElementById("weekday");
+        numDone = 0
+        numTask = 0
+        completionHTML = document.getElementById("completionJS");
+        completionHTML.innerHTML = "0%"
         displayDate();
-      }
 
       document.addEventListener("DOMContentLoaded", initmain)
+      }
       
       function displayDate() { //Displays the date in the frontal frontend and the weekday it is
       	dateBackend = new Date();
@@ -132,9 +136,11 @@
 
         tempBtn.innerHTML = "Add assignment"
         tempBtn.addEventListener("click", function(){
+        	numTask = numTask + 1
+        	update();
           var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value); 
-          let tempTask = document.createElement("span");
-          tempTask.innerHTML = "<br /> (" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
+          let tempTask = document.createElement("div");
+          tempTask.innerHTML = "(" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
 
           tempTask.task = ntask;
 
@@ -142,16 +148,31 @@
           markdone.innerHTML = "Mark as done";
           markdone.correspondingTaskEl = tempTask;
           markdone.addEventListener("click", function() {
+           if (markdone.innerHTML == "Mark as done") {
             ntask.markAsDone();
+            markdone.innerHTML = "Unmark"
             this.correspondingTaskEl.style.textDecoration = "line-through";
+            numDone = numDone + 1
+            update();
+           }else {
+        	markdone.innerHTML = "Mark as done";
+        	ntask.markAsUndone();
+        	this.correspondingTaskEl.style.textDecoration = "none";
+        	numDone = numDone - 1;
+        	update();
+       		 }
           })
           tempTask.appendChild(markdone);
           let hidecompleted = document.createElement("button");
           hidecompleted.innerHTML = "Hide";
           hidecompleted.correspondingTaskEl = tempTask;
           hidecompleted.addEventListener("click", function() {
-            if(ntask.completed)
+            if(ntask.completed) {
               this.correspondingTaskEl.style.display = "none";
+          	numTask = numTask - 1
+          	numDone = numDone - 1
+          	update();
+          	}
           })
           tempTask.appendChild(hidecompleted);
 
@@ -176,6 +197,11 @@
         tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
 
+        tempS.appendChild(cw)
+        tempS.appendChild(hw)
+        tempS.appendChild(project)
+        tempS.appendChild(test)
+
         tempS.appendChild(nameIn);
         tempS.appendChild(dateIn);
         tempS.appendChild(timeIn);
@@ -184,11 +210,6 @@
         tempS.appendChild(tempBtn);
         tempS.appendChild(toggleBtn);
 
-        tempS.appendChild(cw)
-        tempS.appendChild(hw)
-        tempS.appendChild(project)
-        tempS.appendChild(test)
-
         return tempS
       }
 
@@ -196,6 +217,12 @@
         teacherInput = document.getElementById('teacherInput')
 
         displayCard(createCard(teacherInput.value,colorInput.value))
+      }
+
+      function update() {
+      	completionPercent = ((numDone/numTask)*100) + '%'
+      	completionHTML.innerHTML = completionPercent;
+      	completionHTML.style.width = completionPercent;
       }
 
       function displayCard (c) {
@@ -220,12 +247,16 @@
     	Use this planner to jot down your current assignments and completion dates <br />
     	Current date: <span class="dateCSS" id="date"></span>, <span class="weekdateCSS" id="weekday"></span>
     </p>
+    Task Completion Bar!
+	<div class="container">
+  		<div class="completionCSS" id="completionJS"></div>
+	</div>
+	<br />
     <section id='createCard' class="createCard">
       <input placeholder='Class name' id='teacherInput'>
 
       <input type="color" id='colorInput'>
       <button id='submitButton'>Add</button>
     </section>
-
   </body>
 </html>

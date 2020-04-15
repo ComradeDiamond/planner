@@ -61,3 +61,6 @@ Task.prototype.remind = function(time) { //time comes from a text box on interfa
 Task.prototype.markAsDone = function() { //on check of a checkbox
     this.completed = true;
 }
+Task.prototype.markAsUndone = function() { //opposite of markAsDone
+    this.completed = false;
+}
