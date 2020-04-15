@@ -2,7 +2,10 @@
 <html lang="en" dir="ltr">
   <head>
     <link rel = "stylesheet" href = "css/main.css"/>
-
+    <script src="js/borrowed.js"></script>
+    <script src="js/constructors.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/settings.js"></script>
     <style>
 
       @font-face {
@@ -98,7 +101,7 @@
 
         let v4 = document.createElement("option");
         v4.value = "test";
-        v4.innerHTML = "test";
+        v4.innerHTML = "test";fgfdfdddderty
         selection.options.add(v4);
 
         let nameIn = document.createElement("input"); //input fields for adding new tasks
@@ -112,6 +115,19 @@
         timeIn.type = "time";
         timeIn.placeholder = "Due time";
         timeIn.id = "dueTimeInput";
+        let div = document.createElement("div");
+        let toggleBtn = document.createElement("button");
+        toggleBtn.innerHTML = 'Toggle Visibility';
+        toggleBtn.addEventListener("click", function(){
+        	if (tempS.style.Visibility == "hidden") {
+        		tempS.style.Visibility == "visible";
+        	}
+        	else
+        	{
+        		tempS.style.Visibility == "hidden";
+        		this.style.Visibility == "visible";
+        	}
+        })
         let tempBtn = document.createElement("button");
 
         tempBtn.innerHTML = "Add assignment"
@@ -159,7 +175,8 @@
         tempS.appendChild(tempB)
         tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
-        tempS.appendChild
+        tempS.appendChild(div)
+        tempS.appendChild(toggleBtn)
        
         tempS.appendChild(nameIn);
         tempS.appendChild(dateIn);
