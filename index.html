@@ -115,6 +115,19 @@
         timeIn.type = "time";
         timeIn.placeholder = "Due time";
         timeIn.id = "dueTimeInput";
+        let div = document.createElement("div");
+        let toggleBtn = document.createElement("button");
+        toggleBtn.innerHTML = 'Toggle Visibility';
+        toggleBtn.addEventListener("click", function(){
+        	if (tempS.style.visibility == "hidden") {
+        		tempS.style.visibility = "visible";
+        	}
+        	else
+        	{
+        		tempS.style.visibility = "hidden";
+        		this.style.visibility = "visible";
+        	}
+        })
         let tempBtn = document.createElement("button");
 
         tempBtn.innerHTML = "Add assignment"
@@ -162,13 +175,14 @@
         tempS.appendChild(tempB)
         tempS.appendChild(colorChange)
         tempS.appendChild(tempT)
-        tempS.appendChild
-       
+
         tempS.appendChild(nameIn);
         tempS.appendChild(dateIn);
         tempS.appendChild(timeIn);
         tempS.appendChild(selection);
+        tempS.appendChild(div);
         tempS.appendChild(tempBtn);
+        tempS.appendChild(toggleBtn);
 
         tempS.appendChild(cw)
         tempS.appendChild(hw)
