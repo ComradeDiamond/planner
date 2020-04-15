@@ -119,13 +119,13 @@
         let toggleBtn = document.createElement("button");
         toggleBtn.innerHTML = 'Toggle Visibility';
         toggleBtn.addEventListener("click", function(){
-        	if (tempS.style.Visibility == "hidden") {
-        		tempS.style.Visibility = "visible";
+        	if (tempS.style.visibility == "hidden") {
+        		tempS.style.visibility = "visible";
         	}
         	else
         	{
-        		tempS.style.Visibility = "hidden";
-        		this.style.Visibility = "visible";
+        		tempS.style.visibility = "hidden";
+        		this.style.visibility = "visible";
         	}
         })
         let tempBtn = document.createElement("button");
@@ -181,6 +181,7 @@
         tempS.appendChild(timeIn);
         tempS.appendChild(selection);
         tempS.appendChild(tempBtn);
+        temS.appendChild(div);
         tempS.appendChild(toggleBtn);
 
         tempS.appendChild(cw)
