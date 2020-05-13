@@ -6,6 +6,7 @@
     <script src="js/constructors.js"></script>
     <script src="js/script.js"></script>
     <script src="js/settings.js"></script>
+    <script src="js/storage.js"></script>
     <style>
 
       @font-face {
@@ -32,11 +33,33 @@
         weekdayHTML = document.getElementById("weekday");
         numDone = 0
         numTask = 0
+        numCard = -1 //We're going to use this for local storage array accessing
         completionHTML = document.getElementById("completionJS");
         completionHTML.innerHTML = "0%"
         displayDate();
 
-      document.addEventListener("DOMContentLoaded", initmain)
+        //Creates the local storage
+        try
+        {
+          localStorageArray = JSON.parse(localStorage.array);
+        }
+        catch
+        {
+          localStorageArray = [];
+          console.log("Created local storage! Now gimmee a cooki- wait, we don't use that garbage around here");
+        }
+
+        try
+        {
+          for (var i=0; i<localStorageArray.length; i++) {
+            let currentThing = localStorageArray[i][0];
+            displayCard(createExistingCard(currentThing.teacher, currentThing.color, i));
+          }
+        }
+        catch(err)
+        {
+          console.log(err);
+        }
       }
       
       function displayDate() { //Displays the date in the frontal frontend and the weekday it is
@@ -47,176 +70,10 @@
       	weekdayHTML.innerHTML = days[daynum];
       }
 
-      function createCard (t,c) {
-        let displayDone = true;
-
-        let tempS = document.createElement('section')
-        tempS.className = 'card'
-        tempS.subject = new Subject(t)
-        tempS.style.backgroundColor = c
-        tempS.style.color = invertColor(c)
-
-        let tempB = document.createElement('button')
-        tempB.addEventListener("click", function(){
-          document.body.removeChild(tempS)
-        })
-        tempB.className = 'deleteButton'
-        tempB.innerText = 'X'
-
-        let colorChange = document.createElement("input")
-        colorChange.type = "color";
-        colorChange.addEventListener("change", function() {
-          tempS.style.backgroundColor = this.value;
-          tempS.style.color = invertColor(this.value);
-        })
-
-        let tempT = document.createElement('h1')
-        tempT.className = 'teacher'
-        tempT.innerText = t
-
-        let cw = document.createElement('span') 
-        cw.className= 'assignment'
-        cw.assignemnts = tempS.subject.classwork;
-        let hw = document.createElement('span') 
-        hw.className= 'assignment'
-        hw.assignemnts = tempS.subject.homework;
-        let project = document.createElement('span') 
-        project.className= 'assignment'
-        project.assignemnts = tempS.subject.project;
-        let test = document.createElement('span') 
-        test.className= 'assignment'
-        test.assignemnts = tempS.subject.test;
-
-        let selection = document.createElement("select");
-        let v1 = document.createElement("option");
-        v1.value = "classwork";
-        v1.innerHTML = "classwork";
-        selection.options.add(v1);
-
-        let v2 = document.createElement("option");
-        v2.value = "homework";
-        v2.innerHTML = "homework";
-        selection.options.add(v2);
-
-        let v3 = document.createElement("option");
-        v3.value = "project";
-        v3.innerHTML = "project";
-        selection.options.add(v3);
-
-        let v4 = document.createElement("option");
-        v4.value = "test";
-        v4.innerHTML = "test";
-        selection.options.add(v4);
-
-        let nameIn = document.createElement("input"); //input fields for adding new tasks
-        nameIn.placeholder = "Assignment name";
-        nameIn.id = "assignmentInput";
-        let dateIn = document.createElement("input");
-        dateIn.type = "date";
-        dateIn.placeholder = "Due date";
-        dateIn.id = "dueDateInput";
-        let timeIn = document.createElement("input");
-        timeIn.type = "time";
-        timeIn.placeholder = "Due time";
-        timeIn.id = "dueTimeInput";
-        let div = document.createElement("div");
-        let toggleBtn = document.createElement("button");
-        toggleBtn.innerHTML = 'Toggle Visibility';
-        toggleBtn.addEventListener("click", function(){
-        	if (tempS.style.visibility == "hidden") {
-        		tempS.style.visibility = "visible";
-        	}
-        	else
-        	{
-        		tempS.style.visibility = "hidden";
-        		this.style.visibility = "visible";
-        	}
-        })
-        let tempBtn = document.createElement("button");
-
-        tempBtn.innerHTML = "Add assignment"
-        tempBtn.addEventListener("click", function(){
-        	numTask = numTask + 1
-        	update();
-          var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value); 
-          let tempTask = document.createElement("div");
-          tempTask.innerHTML = "(" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
-
-          tempTask.task = ntask;
-
-          let markdone = document.createElement("button"); //mark as done
-          markdone.innerHTML = "Mark as done";
-          markdone.correspondingTaskEl = tempTask;
-          markdone.addEventListener("click", function() {
-           if (markdone.innerHTML == "Mark as done") {
-            ntask.markAsDone();
-            markdone.innerHTML = "Unmark"
-            this.correspondingTaskEl.style.textDecoration = "line-through";
-            numDone = numDone + 1
-            update();
-           }else {
-        	markdone.innerHTML = "Mark as done";
-        	ntask.markAsUndone();
-        	this.correspondingTaskEl.style.textDecoration = "none";
-        	numDone = numDone - 1;
-        	update();
-       		 }
-          })
-          tempTask.appendChild(markdone);
-          let hidecompleted = document.createElement("button");
-          hidecompleted.innerHTML = "Hide";
-          hidecompleted.correspondingTaskEl = tempTask;
-          hidecompleted.addEventListener("click", function() {
-            if(ntask.completed) {
-              this.correspondingTaskEl.style.display = "none";
-          	numTask = numTask - 1
-          	numDone = numDone - 1
-          	update();
-          	}
-          })
-          tempTask.appendChild(hidecompleted);
-
-          switch (selection.value) {
-            case("homework"):
-              var el = hw;
-              break;
-            case("classwork"):
-              var el = cw;
-              break;
-            case("test"):
-              var el = test;
-              break;
-            case("project"):
-              var el = project;
-              break;
-          }
-          el.appendChild(tempTask);
-        });
-
-        tempS.appendChild(tempB)
-        tempS.appendChild(colorChange)
-        tempS.appendChild(tempT)
-
-        tempS.appendChild(cw)
-        tempS.appendChild(hw)
-        tempS.appendChild(project)
-        tempS.appendChild(test)
-
-        tempS.appendChild(nameIn);
-        tempS.appendChild(dateIn);
-        tempS.appendChild(timeIn);
-        tempS.appendChild(selection);
-        tempS.appendChild(div);
-        tempS.appendChild(tempBtn);
-        tempS.appendChild(toggleBtn);
-
-        return tempS
-      }
-
       function generateCardFromClick() {
         teacherInput = document.getElementById('teacherInput')
 
-        displayCard(createCard(teacherInput.value,colorInput.value))
+        displayCard(createCard(teacherInput.value,colorInput.value));
       }
 
       function update() {
@@ -248,6 +105,7 @@
     	Current date: <span class="dateCSS" id="date"></span>, <span class="weekdateCSS" id="weekday"></span>
     </p>
     Task Completion Bar!
+    <button onclick="localStorage.array = ''">Reset local storage</button>
 	<div class="container">
   		<div class="completionCSS" id="completionJS"></div>
 	</div>
@@ -260,3 +118,4 @@
     </section>
   </body>
 </html>
+  
