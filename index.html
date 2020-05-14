@@ -53,7 +53,7 @@
         {
           for (var i=0; i<localStorageArray.length; i++) {
             let currentThing = localStorageArray[i][0];
-            displayCard(createExistingCard(currentThing.teacher, currentThing.color, i));
+            displayCard(createCard(currentThing.teacher, currentThing.color, localStorageLoad, i));
           }
         }
         catch(err)
@@ -73,7 +73,7 @@
       function generateCardFromClick() {
         teacherInput = document.getElementById('teacherInput')
 
-        displayCard(createCard(teacherInput.value,colorInput.value));
+        displayCard(createCard(teacherInput.value,colorInput.value, storageArrayAdd));
       }
 
       function update() {
