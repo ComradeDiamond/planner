@@ -16,6 +16,7 @@ function createCard(t, c, callback, arrayItem) {
     tempS.subject = new Subject(t)
     tempS.style.backgroundColor = c
     tempS.style.color = invertColor(c)
+    tempS.taskArray = [];
 
     let tempB = document.createElement('button')
     tempB.addEventListener("click", function() {
@@ -101,12 +102,20 @@ function createCard(t, c, callback, arrayItem) {
 
     tempBtn.innerHTML = "Add assignment"
     tempBtn.addEventListener("click", function() {
-        let tasksCreated = (localStorageArray[tempS.id][0].tasks.length)-1
-        tasksCreated += 1;
-
         numTask += 1
-        console.log(tasksCreated)
         update();
+
+        //Adds the item to the localStorage's array of tasks
+        let currentTask = [{
+        	"selection": selection.value,
+        	"name": nameIn.value,
+        	"date": dateIn.value,
+        	"time": timeIn.value,
+            "marked": false
+        }]
+        tempS.taskArray.push(currentTask);
+        localStorageArray[tempS.id][0].tasks.push(currentTask);
+		updateLocalStorage();
         var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value);
         let tempTask = document.createElement("div");
         tempTask.innerHTML = "(" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
@@ -116,6 +125,7 @@ function createCard(t, c, callback, arrayItem) {
         let markdone = document.createElement("button"); //mark as done
         markdone.innerHTML = "Mark as done";
         markdone.correspondingTaskEl = tempTask;
+        
         markdone.addEventListener("click", function() {
             if (markdone.innerHTML == "Mark as done") {
                 ntask.markAsDone();
@@ -124,9 +134,11 @@ function createCard(t, c, callback, arrayItem) {
                 numDone = numDone + 1
                 update();
 
-                //the tasksCreated does not change, and is solidified because when this is created, tasksCreated is already assigned a value
-                localStorageArray[tempS.id][0].tasks[tasksCreated][0].marked = true;
-                updateLocalStorage();
+                //Using indexOf for best match. If two are identical, we just yeet the first one. No biggie b/c they are the same.
+                currentTask[0].marked = true;
+                tempS.taskArray[tempS.taskArray.indexOf(currentTask)][0].marked = true;
+
+                updateLocalStorage(true, tempS);
             } else {
                 markdone.innerHTML = "Mark as done";
                 ntask.markAsUndone();
@@ -134,21 +146,27 @@ function createCard(t, c, callback, arrayItem) {
                 numDone = numDone - 1;
                 update();
 
-                localStorageArray[tempS.id][0].tasks[tasksCreated][0].marked = false;
-                updateLocalStorage();
+                currentTask[0].marked = true;
+               	tempS.taskArray[tempS.taskArray.indexOf(currentTask)][0].marked = false;
+
+                updateLocalStorage(true, tempS);
             }
         })
         tempTask.appendChild(markdone);
+
         let hidecompleted = document.createElement("button");
         hidecompleted.innerHTML = "Hide";
         hidecompleted.correspondingTaskEl = tempTask;
         hidecompleted.addEventListener("click", function() {
             if (ntask.completed) {
                 this.correspondingTaskEl.style.display = "none";
-                numTask = numTask - 1
-                numDone = numDone - 1
+                numTask -= 1
+                numDone -= 1
                 update();
-            }
+
+                tempS.taskArray.splice(tempS.taskArray.indexOf(currentTask), 1);
+                updateLocalStorage(true, tempS);
+            }    
         })
         tempTask.appendChild(hidecompleted);
 
@@ -167,17 +185,6 @@ function createCard(t, c, callback, arrayItem) {
                 break;
         }
         el.appendChild(tempTask);
-
-        //Adds the item to the task array
-        localStorageArray[tempS.id][0].tasks.push([{
-        	"selection": selection.value,
-        	"name": nameIn.value,
-        	"date": dateIn.value,
-        	"time": timeIn.value,
-            "marked": false,
-            "position": tasksCreated
-        }]);
-        updateLocalStorage();
     });
 
     callback(tempS, arrayItem, hw, cw, test, project, selection, c, t);
@@ -201,18 +208,42 @@ function createCard(t, c, callback, arrayItem) {
 
     return tempS;
 }
-function updateLocalStorage() { //Carry it back to the top
-	let tempStorage = JSON.stringify(localStorageArray);
-	localStorage.array = tempStorage;
+function updateLocalStorage(isTask, tempS) { 
+	if ((tempS == undefined) && isTask == undefined) //Lazy shortcut
+	{
+		let tempStorage = JSON.stringify(localStorageArray);
+		localStorage.setItem("array", tempStorage);
+	}
+	if (isTask)
+	{
+		localStorageArray[tempS.id][0].tasks = tempS.taskArray;
+		updateLocalStorage();
+	}
+	else //Proper notation
+	{
+		let tempStorage = JSON.stringify(localStorageArray);
+		localStorage.array = tempStorage;
+	}
 }
 function localStorageLoad(tempS, arrayItem, hw, cw, test, project, selection, c, t) { //Variables for scoping issues
     try{
+    	localStorageArray[arrayItem][0].tasks = tempS.taskArray;
+
         //Loads up the stuff in localStorageArray
-        let tasksCreated = -1;
         for (taskQuene=0; taskQuene<localStorageArray[arrayItem][0].tasks.length; taskQuene++)
         {
-            tasksCreated += 1;
+
             let queneObject = localStorageArray[arrayItem][0].tasks[taskQuene][0];
+
+            let currentTask = [{
+        	"selection": queneObject.selection,
+        	"name": queneObject.name,
+        	"date": queneObject.date,
+        	"time": queneObject.time,
+            "marked": false //For now, we assume it is false, but change it later
+        	}]
+        	tempS.taskArray.push(currentTask);
+
             numTask += 1
             update();
             var ntask2 = tempS.subject[queneObject.selection].addTask(queneObject.name, queneObject.date, queneObject.time);
@@ -233,8 +264,9 @@ function localStorageLoad(tempS, arrayItem, hw, cw, test, project, selection, c,
                     numDone += 1
                     update();
 
-                    queneObject.marked = true;
-                    updateLocalStorage();
+                    currentTask[0].marked = true;
+                    tempS.taskArray[tempS.taskArray.indexOf(currentTask)][0].marked = true;
+                    updateLocalStorage(true, tempS);
                 } else {
                     markdone.innerHTML = "Mark as done";
                     ntask2.markAsUndone();
@@ -242,8 +274,10 @@ function localStorageLoad(tempS, arrayItem, hw, cw, test, project, selection, c,
                     numDone -= 1;
                     update();
 
-                    queneObject.marked = false;
-                    updateLocalStorage();
+                    currentTask[0].marked = false;
+                    tempS.taskArray[tempS.taskArray.indexOf(currentTask)][0].marked = false;
+
+                    updateLocalStorage(true, tempS);
                 }
             })
             tempTask.appendChild(markdone);
@@ -261,11 +295,14 @@ function localStorageLoad(tempS, arrayItem, hw, cw, test, project, selection, c,
             hidecompleted.innerHTML = "Hide";
             hidecompleted.correspondingTaskEl = tempTask;
             hidecompleted.addEventListener("click", function() {
-                if (ntask.completed) {
+                if (ntask2.completed) {
                     this.correspondingTaskEl.style.display = "none";
                     numTask -= 1
                     numDone -= 1
                     update();
+
+					tempS.taskArray.splice(tempS.taskArray.indexOf(currentTask), 1);
+                	updateLocalStorage(true, tempS);
                 }
             })
             tempTask.appendChild(hidecompleted);
