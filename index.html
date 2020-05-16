@@ -38,14 +38,15 @@
         completionHTML.innerHTML = "0%"
         displayDate();
 
-        //Creates the local storage
+
        try
         {
+          console.log(localStorage.array);
           localStorageArray = JSON.parse(localStorage.array);
+          console.log(localStorageArray)
         }
         catch(err)
         {
-          console.log(err)
      	    localStorageArray = [];
           console.log("Created local storage! Now gimmee a cooki- wait, we don't use that garbage around here");
         } 
