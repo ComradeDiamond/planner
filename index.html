@@ -38,23 +38,21 @@
         completionHTML.innerHTML = "0%"
         displayDate();
 
-
        try
         {
-          console.log(localStorage.array);
-          localStorageArray = JSON.parse(localStorage.array);
-          console.log(localStorageArray)
+          localStorageArray1 = JSON.parse(localStorage.array);
+          console.log(localStorageArray1)
         }
         catch(err)
         {
-     	    localStorageArray = [];
+     	    localStorageArray1 = [];
           console.log("Created local storage! Now gimmee a cooki- wait, we don't use that garbage around here");
         } 
-
+        
         try
         {
-          for (var i=0; i<localStorageArray.length; i++) {
-            let currentThing = localStorageArray[i][0];
+          for (var i=0; i<localStorageArray1.length; i++) {
+            let currentThing = localStorageArray1[i];
             displayCard(createCard(currentThing.teacher, currentThing.color, localStorageLoad, i));
           }
         }
