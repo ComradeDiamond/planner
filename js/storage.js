@@ -22,7 +22,7 @@ function createCard(t, c, callback, arrayItem) {
     tempB.addEventListener("click", function() {
         document.body.removeChild(tempS)
 
-        localStorageArray.splice(tempS.id, 1);
+        localStorageArray1.splice(tempS.id, 1);
         updateLocalStorage();
     })
     tempB.className = 'deleteButton'
@@ -34,7 +34,7 @@ function createCard(t, c, callback, arrayItem) {
         tempS.style.backgroundColor = this.value;
         tempS.style.color = invertColor(this.value);
 
-        localStorageArray[tempS.id][0].color = this.value;
+        localStorageArray1[tempS.id].color = this.value;
         updateLocalStorage();
     })
 
@@ -114,8 +114,7 @@ function createCard(t, c, callback, arrayItem) {
             "marked": false
         }]
         tempS.taskArray.push(currentTask);
-        localStorageArray[tempS.id][0].tasks.push(currentTask);
-		updateLocalStorage();
+		updateLocalStorage(true, tempS);
         var ntask = tempS.subject[selection.value].addTask(nameIn.value, dateIn.value, timeIn.value);
         let tempTask = document.createElement("div");
         tempTask.innerHTML = "(" + selection.value + ") " + nameIn.value + " " + dateIn.value + " " + timeIn.value; //append new task
@@ -211,29 +210,30 @@ function createCard(t, c, callback, arrayItem) {
 function updateLocalStorage(isTask, tempS) { 
 	if ((tempS == undefined) && isTask == undefined) //Lazy shortcut
 	{
-		let tempStorage = JSON.stringify(localStorageArray);
+		let tempStorage = JSON.stringify(localStorageArrayf);
 		localStorage.setItem("array", tempStorage);
 	}
 	if (isTask)
 	{
-		localStorageArray[tempS.id][0].tasks = tempS.taskArray;
+        tempStorage = [];
+        for (var i=0; i<tempS.taskArray.length; i++) {
+            tempStorage[i] = tempS.taskArray[i][0];
+        }
+        
+		localStorageArray1[tempS.id].tasks = tempStorage;
+        
 		updateLocalStorage();
-	}
-	else //Proper notation
-	{
-		let tempStorage = JSON.stringify(localStorageArray);
-		localStorage.array = tempStorage;
 	}
 }
 function localStorageLoad(tempS, arrayItem, hw, cw, test, project, selection, c, t) { //Variables for scoping issues
     try{
-    	localStorageArray[arrayItem][0].tasks = tempS.taskArray;
+    	localStorageArray1[arrayItem].tasks = tempS.taskArray;
 
-        //Loads up the stuff in localStorageArray
-        for (taskQuene=0; taskQuene<localStorageArray[arrayItem][0].tasks.length; taskQuene++)
+        //Loads up the stuff in localStorageArray1
+        for (taskQuene=0; taskQuene<localStorageArray1[arrayItem].tasks.length; taskQuene++)
         {
 
-            let queneObject = localStorageArray[arrayItem][0].tasks[taskQuene][0];
+            let queneObject = localStorageArray1[arrayItem].tasks[taskQuene];
 
             let currentTask = [{
         	"selection": queneObject.selection,
@@ -330,10 +330,10 @@ function localStorageLoad(tempS, arrayItem, hw, cw, test, project, selection, c,
     }
 }
 function storageArrayAdd(tempS, arrayItem, hw, cw, test, project, selection, c, t){
-    localStorageArray[tempS.id] = [{
+    localStorageArray1[tempS.id] = {
         "color": c,
         "teacher": t, //Or subject
         "tasks": []
-    }];
+    };
     updateLocalStorage();
 }
